@@ -3,7 +3,34 @@ import random
 import copy
 import time
 
-labyrinth = []
+
+class Labyrinth_zone:
+    def __init__(self, Xposition, Yposition, zone_type):
+        self.Xposition = Xposition
+        self.Yposition = Yposition
+        self.type = zone_type
+
+
+class Labyrinth:
+    def __init__(self):
+        source_file = open(
+            "C:/Users/matthieu/GitHub/P3_McGyver/Labyrinth/labyrinth.txt", "r"
+        )
+        sorted_maze = []
+        all_cells = source_file.read()
+        all_cells = all_cells.split(",")
+        for row in range(15):
+            line_cell = []
+            for column in range(15):
+                line_cell.append(int(all_cells[column + row * 15]))
+            sorted_maze.append(line_cell)
+        print("maze from the txt file: ")
+        print(*sorted_maze, sep="\n")
+
+
+labyrinth = Labyrinth()
+
+
 row = []
 Xposition = 0
 Yposition = 0
