@@ -92,11 +92,8 @@ def wall_hit():
     print("\n you hit a wall")
 
 
-pockets = []
-
-
 class Mc_Gyver:
-    def __init__(self, Xposition, Yposition):
+    def __init__(self, Xposition, Yposition, pockets=[]):
         self.Xposition = Xposition
         self.Yposition = Yposition
         self.pockets = pockets
@@ -235,7 +232,7 @@ while is_end_cell(character.Xposition, character.Yposition) != True:
                 character.Xposition
             ]
             print(*labyrinth2, sep="\n")
-            print("Mc Gyver has in his pockets: {}".format(pockets))
+            print("Mc Gyver has in his pockets: {}".format(character.pockets))
 
         else:
             wall_hit()
@@ -250,7 +247,7 @@ while is_end_cell(character.Xposition, character.Yposition) != True:
                 character.Xposition
             ]
             print(*labyrinth2, sep="\n")
-            print("Mc Gyver has in his pockets: {}".format(pockets))
+            print("Mc Gyver has in his pockets: {}".format(character.pockets))
 
         else:
             wall_hit()
@@ -265,7 +262,7 @@ while is_end_cell(character.Xposition, character.Yposition) != True:
                 character.Yposition
             ][X_before_move]
             print(*labyrinth2, sep="\n")
-            print("Mc Gyver has in his pockets: {}".format(pockets))
+            print("Mc Gyver has in his pockets: {}".format(character.pockets))
 
         else:
             wall_hit()
@@ -292,7 +289,7 @@ while is_end_cell(character.Xposition, character.Yposition) != True:
             #     )
             # )
             print(*labyrinth2, sep="\n")
-            print("Mc Gyver has in his pockets: {}".format(pockets))
+            print("Mc Gyver has in his pockets: {}".format(character.pockets))
 
         else:
             wall_hit()
@@ -321,7 +318,11 @@ def suspense():
     print("....")
 
 
-if "needle" in pockets and "tube" in pockets and "ether" in pockets:
+if (
+    "needle" in character.pockets
+    and "tube" in character.pockets
+    and "ether" in character.pockets
+):
     print("")
     print("You reach the exit of the maze")
     suspense()
