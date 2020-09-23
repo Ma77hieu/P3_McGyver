@@ -12,7 +12,21 @@ class Labyrinth_zone:
 
 
 class Labyrinth:
-    def __init__(self, Xposition=0, Yposition=0, sorted_maze=[]):
+    start_X = 0
+    start_Y = 3
+    finish_X = 14
+    finish_Y = 12
+
+    def __init__(
+        self,
+        Xposition=0,
+        Yposition=0,
+        sorted_maze=[],
+        start_X=0,
+        start_Y=3,
+        finish_X=14,
+        finish_Y=12,
+    ):
         self.Xposition = Xposition
         self.Yposition = Yposition
 
@@ -31,14 +45,20 @@ class Labyrinth:
         print(*sorted_maze, sep="\n")
         self.maze = sorted_maze
 
-        def place_start_finish(self):
-            self.maze[3][0] = "S"
-            self.maze[12][14] = "F"
+        def place_start_finish(self, start_X, start_Y, finish_X, finish_Y):
+            self.maze[start_Y][start_X] = "S"
+            self.maze[finish_Y][finish_X] = "F"
 
-        place_start_finish(self)
+        place_start_finish(self, start_X, start_Y, finish_X, finish_Y)
+
+    def is_end_cell(self, X, Y, finish_X=14, finish_Y=12):
+        if X == finish_X and Y == finish_Y:
+            return True
+        return False
 
 
 labyrinth2 = Labyrinth()
+
 
 print("labyrinth2: ")
 print(*labyrinth2.maze, sep="\n")
@@ -57,11 +77,6 @@ labyrinth3 = copy.deepcopy(labyrinth2)
 
 """ PLACE ITEM IN THE MAZE"""
 
-# store the coordinates of our start and end
-start_X_position = 0
-start_Y_position = 3
-end_X_position = 14
-end_Y_position = 12
 
 # define the item class
 item_type = ["N", "E", "T"]  # N for needle, T for tube and E for ether
@@ -187,14 +202,8 @@ print(
 )"""
 
 
-def is_end_cell(X, Y):
-    if X == end_X_position and Y == end_Y_position:
-        return True
-    return False
-
-
 # while character.Xposition != end_X_position and character.Yposition != end_Y_position:
-while is_end_cell(character.Xposition, character.Yposition) != True:
+while labyrinth2.is_end_cell(character.Xposition, character.Yposition) != True:
     move = input("please use the z,q,s,d keys of your keyboard to move Mc_Gyver ")
     print(
         "Mc Gyver comes from this position: {},{}".format(
