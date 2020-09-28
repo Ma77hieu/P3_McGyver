@@ -3,6 +3,8 @@ import random
 import copy
 import time
 
+# import numpy
+
 
 class Labyrinth_zone:
     def __init__(self, Xposition, Yposition, zone_type):
@@ -147,18 +149,6 @@ class Mc_Gyver:
         self.Yposition = Yposition
         self.pockets = pockets
 
-    def move_up(self, Yposition):
-        self.Yposition = Yposition - 1
-
-    def move_down(self, Yposition):
-        self.Yposition = Yposition + 1
-
-    def move_left(self, Xposition):
-        self.Xposition = Xposition - 1
-
-    def move_right(self, Xposition):
-        self.Xposition = Xposition + 1
-
     def pickup(self, labyrinth, Xposition, Yposition, pockets=[]):
         if labyrinth.maze[Yposition][Xposition] == "N":  # N for needle
             pockets.append("needle")
@@ -169,8 +159,70 @@ class Mc_Gyver:
         else:
             pass
 
+    def vertical_movement(
+        self,
+        labyrinth,
+        virgin_labyrinth,
+        Xposition,
+        Yposition,
+        move,
+    ):
+        Y_before_move = self.Yposition
+        if move == "z":
+            if labyrinth.maze[self.Yposition - 1][self.Xposition] != 1:
+                self.Yposition = self.Yposition - 1
+            if labyrinth.maze[Y_before_move - 1][self.Xposition] == 1:
+                messages.hit_wall()
+        if move == "s":
+            if labyrinth.maze[self.Yposition + 1][self.Xposition] != 1:
+                self.Yposition = self.Yposition + 1
+            if labyrinth.maze[Y_before_move + 1][self.Xposition] == 1:
+                messages.hit_wall()
+        self.pickup(labyrinth, self.Xposition, self.Yposition, self.pockets)
+        labyrinth.maze[Y_before_move][self.Xposition] = virgin_labyrinth.maze[
+            Y_before_move
+        ][self.Xposition]
+        labyrinth.maze[self.Yposition][self.Xposition] = "M"
+        print(*labyrinth.maze, sep="\n")
+        print("Mc Gyver has in his pockets: {}".format(self.pockets))
+
+    def horizontal_movement(
+        self, labyrinth, virgin_labyrinth, Xposition, Yposition, move
+    ):
+        X_before_move = self.Xposition
+        if move == "q":
+            if labyrinth.maze[self.Yposition][self.Xposition - 1] != 1:
+                self.Xposition = self.Xposition - 1
+            if labyrinth.maze[self.Yposition][X_before_move - 1] == 1:
+                messages.hit_wall()
+        if move == "d":
+            if labyrinth.maze[self.Yposition][self.Xposition + 1] != 1:
+                self.Xposition = self.Xposition + 1
+            if labyrinth.maze[self.Yposition][X_before_move + 1] == 1:
+                messages.hit_wall()
+        self.pickup(labyrinth, self.Xposition, self.Yposition, self.pockets)
+        labyrinth.maze[self.Yposition][X_before_move] = virgin_labyrinth.maze[
+            self.Yposition
+        ][X_before_move]
+        labyrinth.maze[self.Yposition][self.Xposition] = "M"
+        print(*labyrinth.maze, sep="\n")
+        print("Mc Gyver has in his pockets: {}".format(self.pockets))
+
+    # def move_up(self, Yposition):
+    #     self.Yposition = Yposition - 1
+
+    # def move_down(self, Yposition):
+    #     self.Yposition = Yposition + 1
+
+    # def move_left(self, Xposition):
+    #     self.Xposition = Xposition - 1
+
+    # def move_right(self, Xposition):
+    #     self.Xposition = Xposition + 1
+
 
 def main():
+    # initialization of our labyrinth
     labyrinth2 = Labyrinth()
     print("\n labyrinth without items: ")
     print(*labyrinth2.maze, sep="\n")
@@ -180,12 +232,28 @@ def main():
     # it will be used to remember the type of the cell from which mcGyver moves
     labyrinth3 = copy.deepcopy(labyrinth2)
 
-    # palce the items in our labyrinth
+    # place the items in our labyrinth
     labyrinth2.place_items()
 
     print("labyrinth with items:")
     print(*labyrinth2.maze, sep="\n")
     print("")
+
+    # movement = {
+    #     "z": [0, -1],
+    #     "s": [0, 1],
+    #     "q": [-1, 0],
+    #     "d": [1, 0],
+    # }
+    # print(type(movement))
+    # print("dico_mouvements: {}".format(movement))
+    # Xtest = 5
+    # Ytest = 5
+    # position = [Xtest, Ytest]
+
+    # print(position)
+    # new_position = numpy.add(position, movement["z"])
+    # print(new_position)
 
     """ MCGYVER PART"""
 
@@ -244,141 +312,112 @@ def main():
                 character.Xposition, character.Yposition
             )
         )
-        # if move == "z" or move == "s":
-        #     if move == "z":
-        #         Y_before_move = character.Yposition
-        #         if labyrinth2[character.Yposition - 1][character.Xposition] != 1:
-        #             character.move_up(character.Yposition)
-        #         if labyrinth2[Y_before_move - 1][character.Xposition] == 1:
-        #             wall_hit()
-        #     if move == "s":
-        #         if labyrinth2[character.Yposition + 1][character.Xposition] != 1:
-        #             character.move_down(character.Yposition)
-        #         if labyrinth2[Y_before_move + 1][character.Xposition] == 1:
-        #             wall_hit()
-        #         character.pickup(character.Xposition, character.Yposition)
-        #         labyrinth2[character.Yposition][character.Xposition] = "M"
-        #         labyrinth2[Y_before_move][character.Xposition] = labyrinth3[Y_before_move][character.Xposition]
-        #         print(*labyrinth2, sep="\n")
-        #         print("Mc Gyver has in his pockets: {}".format(pockets))
-        # if move == "q" or move == "d":
-        #         X_before_move = character.Xposition
-        #         if move == "q":
-        #             if labyrinth2[character.Yposition][character.Xposition - 1] != 1:
-        #                 character.move_left(character.Yposition)
-        #             if labyrinth2[character.Yposition][X_before_move - 1] == 1:
-        #                 wall_hit()
-        #         if move == "d":
-        #             if labyrinth2[character.Yposition][character.Xposition + 1] != 1:
-        #                 character.move_right(character.Yposition)
-        #             if labyrinth2[character.Yposition][X_before_move + 1] == 1:
-        #                 wall_hit()
-        #         character.pickup(character.Xposition, character.Yposition)
-        #         labyrinth2[character.Yposition][character.Xposition] = "M"
-        #         labyrinth2[character.Yposition][X_before_move] = labyrinth3[character.Yposition][X_before_move]
-        #         print(*labyrinth2, sep="\n")
-        #         print("Mc Gyver has in his pockets: {}".format(pockets)
 
-        # # beginning of working code, commented to try alternative code, do not erase
-        if move == "z":
-            Y_before_move = character.Yposition
-            if labyrinth2.maze[character.Yposition - 1][character.Xposition] != 1:
-                character.move_up(character.Yposition)
-                character.pickup(
-                    labyrinth2,
-                    character.Xposition,
-                    character.Yposition,
-                    character.pockets,
-                )
-                labyrinth2.maze[character.Yposition][
-                    character.Xposition
-                ] = "M"  # M indicates Mc_Gyver position
-                labyrinth2.maze[Y_before_move][character.Xposition] = labyrinth3.maze[
-                    Y_before_move
-                ][character.Xposition]
-                print(*labyrinth2.maze, sep="\n")
-                print("Mc Gyver has in his pockets: {}".format(character.pockets))
+        if move == "z" or move == "s":
+            character.vertical_movement(
+                labyrinth2, labyrinth3, character.Xposition, character.Yposition, move
+            )
+            # Y_before_move = character.Yposition
+            # if labyrinth2.maze[character.Yposition - 1][character.Xposition] != 1:
+            #     character.move_up(character.Yposition)
+            #     character.pickup(
+            #         labyrinth2,
+            #         character.Xposition,
+            #         character.Yposition,
+            #         character.pockets,
+            #     )
+            #     labyrinth2.maze[character.Yposition][
+            #         character.Xposition
+            #     ] = "M"  # M indicates Mc_Gyver position
+            #     labyrinth2.maze[Y_before_move][character.Xposition] = labyrinth3.maze[
+            #         Y_before_move
+            #     ][character.Xposition]
+            #     print(*labyrinth2.maze, sep="\n")
+            #     print("Mc Gyver has in his pockets: {}".format(character.pockets))
 
-            else:
-                messages.hit_wall()
+            # else:
+            #     messages.hit_wall()
 
-        if move == "s":
-            Y_before_move = character.Yposition
-            if labyrinth2.maze[character.Yposition + 1][character.Xposition] != 1:
-                character.move_down(character.Yposition)
-                character.pickup(
-                    labyrinth2,
-                    character.Xposition,
-                    character.Yposition,
-                    character.pockets,
-                )
-                labyrinth2.maze[character.Yposition][character.Xposition] = "M"
-                labyrinth2.maze[Y_before_move][character.Xposition] = labyrinth3.maze[
-                    Y_before_move
-                ][character.Xposition]
-                print(*labyrinth2.maze, sep="\n")
-                print("Mc Gyver has in his pockets: {}".format(character.pockets))
+        # if move == "s":
+        #     Y_before_move = character.Yposition
+        #     if labyrinth2.maze[character.Yposition + 1][character.Xposition] != 1:
+        #         character.move_down(character.Yposition)
+        #         character.pickup(
+        #             labyrinth2,
+        #             character.Xposition,
+        #             character.Yposition,
+        #             character.pockets,
+        #         )
+        #         labyrinth2.maze[character.Yposition][character.Xposition] = "M"
+        #         labyrinth2.maze[Y_before_move][character.Xposition] = labyrinth3.maze[
+        #             Y_before_move
+        #         ][character.Xposition]
+        #         print(*labyrinth2.maze, sep="\n")
+        #         print("Mc Gyver has in his pockets: {}".format(character.pockets))
 
-            else:
-                messages.hit_wall()
+        #     else:
+        #         messages.hit_wall()
 
-        if move == "q":
-            X_before_move = character.Xposition
-            if labyrinth2.maze[character.Yposition][character.Xposition - 1] != 1:
-                character.move_left(character.Xposition)
-                character.pickup(
-                    labyrinth2,
-                    character.Xposition,
-                    character.Yposition,
-                    character.pockets,
-                )
-                labyrinth2.maze[character.Yposition][character.Xposition] = "M"
-                labyrinth2.maze[character.Yposition][X_before_move] = labyrinth3.maze[
-                    character.Yposition
-                ][X_before_move]
-                print(*labyrinth2.maze, sep="\n")
-                print("Mc Gyver has in his pockets: {}".format(character.pockets))
+        if move == "q" or move == "d":
+            character.horizontal_movement(
+                labyrinth2, labyrinth3, character.Xposition, character.Yposition, move
+            )
+        #     X_before_move = character.Xposition
+        #     if labyrinth2.maze[character.Yposition][character.Xposition - 1] != 1:
+        #         character.move_left(character.Xposition)
+        #         character.pickup(
+        #             labyrinth2,
+        #             character.Xposition,
+        #             character.Yposition,
+        #             character.pockets,
+        #         )
+        #         labyrinth2.maze[character.Yposition][character.Xposition] = "M"
+        #         labyrinth2.maze[character.Yposition][X_before_move] = labyrinth3.maze[
+        #             character.Yposition
+        #         ][X_before_move]
+        #         print(*labyrinth2.maze, sep="\n")
+        #         print("Mc Gyver has in his pockets: {}".format(character.pockets))
 
-            else:
-                messages.hit_wall()
+        #     else:
+        #         messages.hit_wall()
 
-        if move == "d":
-            X_before_move = character.Xposition
-            if labyrinth2.maze[character.Yposition][character.Xposition + 1] != 1:
-                # print("X_before_move:{}".format(X_before_move))
-                # print(
-                #     "you are trying to move to a cell with the following type: {}".format(
-                #         labyrinth2[character.Yposition][character.Xposition + 1]
-                #     )
-                # )
-                character.move_right(character.Xposition)
-                character.pickup(
-                    labyrinth2,
-                    character.Xposition,
-                    character.Yposition,
-                    character.pockets,
-                )
-                labyrinth2.maze[character.Yposition][character.Xposition] = "M"
-                labyrinth2.maze[character.Yposition][X_before_move] = labyrinth3.maze[
-                    character.Yposition
-                ][X_before_move]
+        # if move == "d":
+        #     X_before_move = character.Xposition
+        #     if labyrinth2.maze[character.Yposition][character.Xposition + 1] != 1:
+        #         # print("X_before_move:{}".format(X_before_move))
+        #         # print(
+        #         #     "you are trying to move to a cell with the following type: {}".format(
+        #         #         labyrinth2[character.Yposition][character.Xposition + 1]
+        #         #     )
+        #         # )
+        #         character.move_right(character.Xposition)
+        #         character.pickup(
+        #             labyrinth2,
+        #             character.Xposition,
+        #             character.Yposition,
+        #             character.pockets,
+        #         )
+        #         labyrinth2.maze[character.Yposition][character.Xposition] = "M"
+        #         labyrinth2.maze[character.Yposition][X_before_move] = labyrinth3.maze[
+        #             character.Yposition
+        #         ][X_before_move]
 
-                # print(
-                #     "labyrinth3 position depart {}".format(
-                #         labyrinth3[character.Yposition][X_before_move]
-                #     )
-                # )
-                print(*labyrinth2.maze, sep="\n")
-                print("Mc Gyver has in his pockets: {}".format(character.pockets))
+        #         # print(
+        #         #     "labyrinth3 position depart {}".format(
+        #         #         labyrinth3[character.Yposition][X_before_move]
+        #         #     )
+        #         # )
+        #         print(*labyrinth2.maze, sep="\n")
+        #         print("Mc Gyver has in his pockets: {}".format(character.pockets))
 
-            else:
-                messages.hit_wall()
-                # end of working code, commented to try alternative code, do not erase
+        #     else:
+        #         messages.hit_wall()
+        #         # end of working code, commented to try alternative code, do not erase
 
         else:
             if move != "z" and move != "q" and move != "s" and move != "d":
                 print("")
-                print("you pressed the following invalid key: {}".format(move))
+                print("\n you pressed the following invalid key: {} \n".format(move))
                 print("")
 
         print(
