@@ -222,7 +222,7 @@ class Mc_Gyver:
 
 
 def main():
-    # initialization of our labyrinth
+    # creation of our labyrinth instance
     labyrinth2 = Labyrinth()
     print("\n labyrinth without items: ")
     print(*labyrinth2.maze, sep="\n")
@@ -297,6 +297,7 @@ def main():
     #         print(*labyrinth2, sep="\n")
     #         print("Mc Gyver has in his pockets: {}".format(pockets))
 
+    # creation of our character instance
     character = Mc_Gyver(labyrinth2)
     """for debug purposes
     print(
@@ -305,6 +306,7 @@ def main():
         )
     )"""
 
+    # get user inpuut while the end of the maze is not reached
     while labyrinth2.is_end_cell(character.Xposition, character.Yposition) != True:
         move = input("please use the z,q,s,d keys of your keyboard to move Mc_Gyver ")
         print(
@@ -414,18 +416,21 @@ def main():
         #         messages.hit_wall()
         #         # end of working code, commented to try alternative code, do not erase
 
+        # in case user input is not one of the key allowed
         else:
             if move != "z" and move != "q" and move != "s" and move != "d":
                 print("")
                 print("\n you pressed the following invalid key: {} \n".format(move))
                 print("")
 
+        # feedback for the user
         print(
             "Mc Gyver arrived at this position: {},{}".format(
                 character.Xposition, character.Yposition
             )
         )
 
+    # chracter has reached the end of the maze, check the pockets to know if he won or loose
     if (
         "needle" in character.pockets
         and "tube" in character.pockets
