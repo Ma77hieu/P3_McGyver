@@ -1,12 +1,25 @@
 import time
 
-start_X=0
-start_Y=3
-finish_X=14
-finish_Y=12
-maze_path="C:/Users/matthieu/GitHub/P3_McGyver/Labyrinth/labyrinth.txt"
-maze_size=15
+
+start_X = 0
+start_Y = 3
+finish_X = 14
+finish_Y = 12
+maze_path = "C:/Users/matthieu/GitHub/P3_McGyver/Labyrinth/labyrinth.txt"
+maze_size = 15
 item_type = ["N", "E", "T"]  # N for needle, T for tube and E for ether
+
+maze_bg_color = (244, 244, 239)
+
+
+# images = {"M": "C:/Users/matthieu/GitHub/P3_McGyver/resource/MacGyver50px.png",
+#           "N": "C:/Users/matthieu/GitHub/P3_McGyver/resource/aiguille50px.png",
+#           "E": "C:/Users/matthieu/GitHub/P3_McGyver/resource/ether50px.png",
+#           "T": "C:/Users/matthieu/GitHub/P3_McGyver/resource/tube50px.png",
+#           "F": "C:/Users/matthieu/GitHub/P3_McGyver/resource/Gardien50px.png",
+#           1: "C:/Users/matthieu/GitHub/P3_McGyver/resource/wall.png"
+#           }
+
 
 class messages:
     def hit_wall():
