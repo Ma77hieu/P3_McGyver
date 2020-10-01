@@ -10,6 +10,19 @@ maze_size = 15
 item_type = ["N", "E", "T"]  # N for needle, T for tube and E for ether
 
 maze_bg_color = (244, 244, 239)
+game_window_width = 1000
+game_window_height = 1000
+game_window_title = "Escape the maze or be DOOMED"
+
+LINE_WIDTH = 4
+VERTICAL_OFFSET = 50
+HORIZONTAL_OFFSET = 120
+CELL_WIDTH = 50
+CELL_HEIGHT = 50
+NBR_X_CELL = 15
+NBR_Y_CELL = 15
+WIDTH_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT+(NBR_X_CELL)*LINE_WIDTH
+HEIGHT_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT+(NBR_Y_CELL)*LINE_WIDTH
 
 
 # images = {"M": "C:/Users/matthieu/GitHub/P3_McGyver/resource/MacGyver50px.png",

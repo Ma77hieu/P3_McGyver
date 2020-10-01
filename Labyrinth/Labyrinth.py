@@ -14,16 +14,15 @@ class Labyrinth_zone:
 
 
 class Labyrinth:
-    
 
     def __init__(self):
-        self.Xposition = Xposition =0
-        self.Yposition = Yposition =0
-        self.sorted_maze=sorted_maze=[]
-        self.start_X=CONST.start_X
-        self.start_Y=CONST.start_Y
-        self.finish_X=CONST.finish_X
-        self.finish_Y=CONST.finish_Y
+        self.Xposition = Xposition = 0
+        self.Yposition = Yposition = 0
+        self.sorted_maze = sorted_maze = []
+        self.start_X = CONST.start_X
+        self.start_Y = CONST.start_Y
+        self.finish_X = CONST.finish_X
+        self.finish_Y = CONST.finish_Y
 
         source_file = open(CONST.maze_path, "r")
         sorted_maze = []
@@ -32,12 +31,12 @@ class Labyrinth:
         for row in range(CONST.maze_size):
             line_cell = []
             for column in range(CONST.maze_size):
-                line_cell.append(int(all_cells[column + row * CONST.maze_size]))
+                line_cell.append(
+                    int(all_cells[column + row * CONST.maze_size]))
             sorted_maze.append(line_cell)
         self.maze = sorted_maze
         self.maze[self.start_Y][self.start_X] = "S"
         self.maze[self.finish_Y][self.finish_X] = "F"
-
 
     def is_end_cell(self, X, Y):
         if X == self.finish_X and Y == self.finish_Y:
@@ -47,13 +46,68 @@ class Labyrinth:
     def place_items(self):
         # place the items in the maze
         for component in CONST.item_type:
-            item = Item(component, random.randint(0, CONST.maze_size-1), random.randint(0, CONST.maze_size-1))
+            item = Item(component, random.randint(
+                0, CONST.maze_size-1), random.randint(0, CONST.maze_size-1))
 
             # make sure that item is not at the same position as start, finish or another item
             while self.maze[item.Yposition][item.Xposition] != 0:
                 item.Xposition = random.randint(0, CONST.maze_size-1)
                 item.Yposition = random.randint(0, CONST.maze_size-1)
             self.maze[item.Yposition][item.Xposition] = item.item_name
+
+
+class GameWindow:
+    def __init__(self):
+        pass
+    game_screen = pygame.display.set_mode(
+        (CONST.game_window_width, CONST.game_window_height))
+    pygame.display.set_caption(CONST.game_window_title)
+    game_screen = game_screen
+    game_screen.fill(CONST.maze_bg_color)
+    mac = pygame.image.load(
+        'ressource/MacGyver50px.png').convert_alpha()
+    guard = pygame.image.load(
+        "ressource/Gardien50px.png").convert_alpha()
+    needle = pygame.image.load(
+        "ressource/aiguille50px.png").convert_alpha()
+    tube = pygame.image.load("ressource/tube50px.png").convert_alpha()
+    seringe = pygame.image.load(
+        "ressource/seringue.png").convert_alpha()
+    ether = pygame.image.load(
+        "ressource/ether50px.png").convert_alpha()
+    wall = pygame.image.load("ressource/wall50px.png").convert_alpha()
+
+
+class LabyrinthDisplay():
+    def __init__(self, labyrinth, game_window):
+        self.game_window = game_window
+        self.labyrinth = labyrinth
+        for row in range(0, CONST.maze_size):
+            for column in range(0, CONST.maze_size):
+                if self.labyrinth.maze[row][column] in self.pictures.images:
+                    game_window.game_screen.blit(
+                        self.pictures.images[labyrinth.maze[row][column]], (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
+                    pygame.display.flip()
+                elif self.labyrinth.maze[row][column] == 0:
+                    pass
+                elif any(self.labyrinth.maze[row][column] == items for items in CONST.item_type):
+                    game_window.game_screen.blit(
+                        mac, (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
+                    pygame.display.flip()
+        time.sleep(5)
+
+    class Images():
+        def __init__(self):
+            pass
+
+        images = {"M": GameWindow.mac,
+                  "N": GameWindow.needle,
+                  "E": GameWindow.ether,
+                  "T": GameWindow.tube,
+                  "F": GameWindow.guard,
+                  1: GameWindow.wall
+                  }
+    pictures = Images()
 
 
 class Item:
@@ -65,11 +119,11 @@ class Item:
 
 class Mc_Gyver:
     def __init__(self, labyrinth):
-        self.Xposition = Xposition=CONST.start_X
-        self.Yposition = Yposition=CONST.start_Y
-        self.pockets = pockets=[]
+        self.Xposition = Xposition = CONST.start_X
+        self.Yposition = Yposition = CONST.start_Y
+        self.pockets = pockets = []
 
-    def pickup(self, labyrinth,Xposition, Yposition,pockets):
+    def pickup(self, labyrinth, Xposition, Yposition, pockets):
         if labyrinth.maze[self.Yposition][self.Xposition] == "N":  # N for needle
             pockets.append("needle")
         if labyrinth.maze[self.Yposition][self.Xposition] == "T":  # T for tube
@@ -149,9 +203,17 @@ def main():
     # creation of our character instance
     character = Mc_Gyver(labyrinth)
 
+    # creation of our game window
+    game_window = GameWindow()
+
+    # creation of our labyrinth display
+    maze_display = LabyrinthDisplay(labyrinth, game_window)
+    # maze_display.display_maze(labyrinth)
+
     # get user input while the end of the maze is not reached
     while labyrinth.is_end_cell(character.Xposition, character.Yposition) != True:
-        move = input("please use the z,q,s,d keys of your keyboard to move Mc_Gyver ")
+        move = input(
+            "please use the z,q,s,d keys of your keyboard to move Mc_Gyver ")
         print(
             "Mc Gyver comes from this position: {},{}".format(
                 character.Xposition, character.Yposition
@@ -166,7 +228,6 @@ def main():
                 character.Yposition,
                 move,
             )
-            
 
         if move == "q" or move == "d":
             character.horizontal_movement(
@@ -202,4 +263,7 @@ def main():
     else:
         CONST.messages.loose()
 
+
+pygame.init()
 main()
+pygame.quit()
