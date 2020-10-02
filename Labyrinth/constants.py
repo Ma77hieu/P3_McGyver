@@ -24,6 +24,12 @@ NBR_Y_CELL = 15
 WIDTH_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT+(NBR_X_CELL)*LINE_WIDTH
 HEIGHT_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT+(NBR_Y_CELL)*LINE_WIDTH
 
+# path_mac=
+# path_guard=
+# path_needle=
+# path_tube=
+# path_ether=
+
 
 # images = {"M": "C:/Users/matthieu/GitHub/P3_McGyver/resource/MacGyver50px.png",
 #           "N": "C:/Users/matthieu/GitHub/P3_McGyver/resource/aiguille50px.png",

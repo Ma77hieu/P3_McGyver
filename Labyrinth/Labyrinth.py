@@ -62,7 +62,7 @@ class GameWindow:
     game_screen = pygame.display.set_mode(
         (CONST.game_window_width, CONST.game_window_height))
     pygame.display.set_caption(CONST.game_window_title)
-    game_screen = game_screen
+    # game_screen = game_screen
     game_screen.fill(CONST.maze_bg_color)
     mac = pygame.image.load(
         'ressource/MacGyver50px.png').convert_alpha()
@@ -76,25 +76,29 @@ class GameWindow:
     ether = pygame.image.load(
         "ressource/ether50px.png").convert_alpha()
     wall = pygame.image.load("ressource/wall50px.png").convert_alpha()
+    blank = pygame.image.load("ressource/blank50px.png").convert_alpha()
 
 
 class LabyrinthDisplay():
     def __init__(self, labyrinth, game_window):
         self.game_window = game_window
-        self.labyrinth = labyrinth
+        # self.labyrinth = labyrinth
         for row in range(0, CONST.maze_size):
             for column in range(0, CONST.maze_size):
-                if self.labyrinth.maze[row][column] in self.pictures.images:
+                if labyrinth.maze[row][column] in self.pictures.images:
                     game_window.game_screen.blit(
                         self.pictures.images[labyrinth.maze[row][column]], (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
                     pygame.display.flip()
-                elif self.labyrinth.maze[row][column] == 0:
-                    pass
-                elif any(self.labyrinth.maze[row][column] == items for items in CONST.item_type):
+                elif labyrinth.maze[row][column] == 0:
                     game_window.game_screen.blit(
-                        mac, (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
+                        game_window.blank, (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
                     pygame.display.flip()
-        time.sleep(5)
+
+                # elif any(labyrinth.maze[row][column] == items for items in CONST.item_type):
+                #     game_window.game_screen.blit(
+                #         mac, (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
+                #     pygame.display.flip()
+        # time.sleep(5)
 
     class Images():
         def __init__(self):
@@ -105,7 +109,8 @@ class LabyrinthDisplay():
                   "E": GameWindow.ether,
                   "T": GameWindow.tube,
                   "F": GameWindow.guard,
-                  1: GameWindow.wall
+                  1: GameWindow.wall,
+                  0: GameWindow.blank
                   }
     pictures = Images()
 
@@ -138,15 +143,15 @@ class Mc_Gyver:
         labyrinth,
         virgin_labyrinth,
         Xposition, Yposition,
-        move,
+        event
     ):
         Y_before_move = self.Yposition
-        if move == "z":
+        if event.type == pygame.KEYUP and event.key == pygame.K_UP:
             if labyrinth.maze[self.Yposition - 1][self.Xposition] != 1:
                 self.Yposition = self.Yposition - 1
             if labyrinth.maze[Y_before_move - 1][self.Xposition] == 1:
                 CONST.messages.hit_wall()
-        if move == "s":
+        if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
             if labyrinth.maze[self.Yposition + 1][self.Xposition] != 1:
                 self.Yposition = self.Yposition + 1
             if labyrinth.maze[Y_before_move + 1][self.Xposition] == 1:
@@ -156,19 +161,21 @@ class Mc_Gyver:
             Y_before_move
         ][self.Xposition]
         labyrinth.maze[self.Yposition][self.Xposition] = "M"
+        # print("labyrinth after movement:")
         print(*labyrinth.maze, sep="\n")
         print("Mc Gyver has in his pockets: {}".format(self.pockets))
 
     def horizontal_movement(
-        self, labyrinth, virgin_labyrinth, Xposition, Yposition, move
+        self, labyrinth, virgin_labyrinth, Xposition, Yposition, event
     ):
         X_before_move = self.Xposition
-        if move == "q":
+
+        if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:
             if labyrinth.maze[self.Yposition][self.Xposition - 1] != 1:
                 self.Xposition = self.Xposition - 1
             if labyrinth.maze[self.Yposition][X_before_move - 1] == 1:
                 CONST.messages.hit_wall()
-        if move == "d":
+        if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:
             if labyrinth.maze[self.Yposition][self.Xposition + 1] != 1:
                 self.Xposition = self.Xposition + 1
             if labyrinth.maze[self.Yposition][X_before_move + 1] == 1:
@@ -178,6 +185,7 @@ class Mc_Gyver:
             self.Yposition
         ][X_before_move]
         labyrinth.maze[self.Yposition][self.Xposition] = "M"
+        # print("labyrinth after movement:")
         print(*labyrinth.maze, sep="\n")
         print("Mc Gyver has in his pockets: {}".format(self.pockets))
 
@@ -210,8 +218,48 @@ def main():
     maze_display = LabyrinthDisplay(labyrinth, game_window)
     # maze_display.display_maze(labyrinth)
 
-    # get user input while the end of the maze is not reached
-    while labyrinth.is_end_cell(character.Xposition, character.Yposition) != True:
+    game_on_going = True
+    while game_on_going:
+        # print("please use the z,q,s,d keys of your keyboard to move Mc_Gyver")
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                game_on_going = 0
+            elif event.type == pygame.KEYUP and (event.key == pygame.K_UP or event.key == pygame.K_DOWN):
+                character.vertical_movement(
+                    labyrinth,
+                    labyrinth_copy,
+                    character.Xposition,
+                    character.Yposition,
+                    event
+                )
+            elif event.type == pygame.KEYUP and (event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT):
+                character.horizontal_movement(
+                    labyrinth,
+                    labyrinth_copy,
+                    character.Xposition,
+                    character.Yposition,
+                    event
+                )
+            # elif event.type == pygame.KEYUP:
+            #     print("\n you pressed the following invalid key: {} \n".format(pygame.event.key))
+            # print("labyrinth used by pygame:")
+            # print(*labyrinth.maze, sep="\n")
+            maze_display = LabyrinthDisplay(labyrinth, game_window)
+
+            if labyrinth.is_end_cell(character.Xposition, character.Yposition) == True:
+                if ("needle" in character.pockets and "tube" in character.pockets and "ether" in character.pockets):
+                    CONST.messages.win()
+                    game_on_going = 0
+                else:
+                    CONST.messages.loose()
+                    game_on_going = 0
+
+
+# DISPLACEMENT pygame
+
+"""
+   # get user input while the end of the maze is not reached
+   while labyrinth.is_end_cell(character.Xposition, character.Yposition) != True:
         move = input(
             "please use the z,q,s,d keys of your keyboard to move Mc_Gyver ")
         print(
@@ -252,7 +300,7 @@ def main():
             )
         )
 
-    # chracter has reached the end of the maze, check the pockets to know if he won or loose
+    # character has reached the end of the maze, check the pockets to know if he won or loose
     if (
         "needle" in character.pockets
         and "tube" in character.pockets
@@ -262,7 +310,7 @@ def main():
 
     else:
         CONST.messages.loose()
-
+"""
 
 pygame.init()
 main()
