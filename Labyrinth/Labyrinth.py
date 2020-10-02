@@ -77,42 +77,91 @@ class GameWindow:
         "ressource/ether50px.png").convert_alpha()
     wall = pygame.image.load("ressource/wall50px.png").convert_alpha()
     blank = pygame.image.load("ressource/blank50px.png").convert_alpha()
+    start = pygame.image.load("ressource/start50px.png").convert_alpha()
+
+
+class Objects_Display:
+    def __init__(self, game_window, pictures, pockets=[]):
+        objects_screen = pygame.Surface((
+            CONST.width_objects_surface, CONST.height_objects_surface))
+        game_window.game_screen.blit(
+            objects_screen, (CONST.HORIZONTAL_OFFSET, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2))
+        font = pygame.font.Font('ressource/bahnschrift.ttf', 16)
+        objects_text = font.render(
+            'You have in your pockets:', True, CONST.white)
+        game_window.game_screen.blit(
+            objects_text, (CONST.HORIZONTAL_OFFSET+5, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2+16))
+        if pockets != []:
+            for elem in range(len(pockets)):
+                if pockets[elem] == "N" or pockets[elem] == "T" or pockets[elem] == "E":
+                    game_window.game_screen.blit(
+                        pictures.images[pockets[elem]], (CONST.HORIZONTAL_OFFSET+elem*CONST.CELL_WIDTH, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*3))
+                    pygame.display.flip()
+
+
+class Messages_Display:
+    def __init__(self, game_window):
+        font = pygame.font.Font('ressource/bahnschrift.ttf', 16)
+        objects_text = font.render(
+            'You have in your pockets:', True, CONST.white)
+        game_window.game_screen.blit(
+            objects_text, (CONST.HORIZONTAL_OFFSET+5, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2+16))
+        if pockets != []:
+            for elem in range(len(pockets)):
+                if pockets[elem] == "N" or pockets[elem] == "T" or pockets[elem] == "E":
+                    game_window.game_screen.blit(
+                        pictures.images[pockets[elem]], (CONST.HORIZONTAL_OFFSET+elem*CONST.CELL_WIDTH, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*3))
+                    pygame.display.flip()
+
+    # objects_screen.fill(125, 244, 239)
+
+
+# class MessagesDisplay:
 
 
 class LabyrinthDisplay():
-    def __init__(self, labyrinth, game_window):
+    def __init__(self, labyrinth, game_window, pictures):
         self.game_window = game_window
         # self.labyrinth = labyrinth
         for row in range(0, CONST.maze_size):
             for column in range(0, CONST.maze_size):
-                if labyrinth.maze[row][column] in self.pictures.images:
-                    game_window.game_screen.blit(
-                        self.pictures.images[labyrinth.maze[row][column]], (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
-                    pygame.display.flip()
-                elif labyrinth.maze[row][column] == 0:
-                    game_window.game_screen.blit(
-                        game_window.blank, (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
-                    pygame.display.flip()
-
-                # elif any(labyrinth.maze[row][column] == items for items in CONST.item_type):
+                # if labyrinth.maze[row][column] in self.pictures.images:
+                game_window.game_screen.blit(
+                    pictures.images[labyrinth.maze[row][column]], (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
+                pygame.display.flip()
+                # elif labyrinth.maze[row][column] == 0:
                 #     game_window.game_screen.blit(
-                #         mac, (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
+                #         game_window.blank, (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
                 #     pygame.display.flip()
+
+        # elif any(labyrinth.maze[row][column] == items for items in CONST.item_type):
+        #     game_window.game_screen.blit(
+        #         mac, (CONST.HORIZONTAL_OFFSET+column*CONST.CELL_HEIGHT, row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
+        #     pygame.display.flip()
         # time.sleep(5)
 
-    class Images():
-        def __init__(self):
-            pass
+    def update_Display(labyrinth, game_window, X, Y, X_before, Y_before, pictures):
 
-        images = {"M": GameWindow.mac,
-                  "N": GameWindow.needle,
-                  "E": GameWindow.ether,
-                  "T": GameWindow.tube,
-                  "F": GameWindow.guard,
-                  1: GameWindow.wall,
-                  0: GameWindow.blank
-                  }
-    pictures = Images()
+        game_window.game_screen.blit(
+            pictures.images[labyrinth.maze[Y_before][X_before]], (CONST.HORIZONTAL_OFFSET+X_before*CONST.CELL_HEIGHT, Y_before*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
+        pygame.display.flip()
+        game_window.game_screen.blit(
+            pictures.images[labyrinth.maze[Y][X]], (CONST.HORIZONTAL_OFFSET+X*CONST.CELL_HEIGHT, Y*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
+        pygame.display.flip()
+
+
+class Images():
+    def __init__(self):
+        pass
+    images = {"M": GameWindow.mac,
+              "N": GameWindow.needle,
+              "E": GameWindow.ether,
+              "T": GameWindow.tube,
+              "F": GameWindow.guard,
+              1: GameWindow.wall,
+              0: GameWindow.blank,
+              "S": GameWindow.start
+              }
 
 
 class Item:
@@ -123,18 +172,20 @@ class Item:
 
 
 class Mc_Gyver:
-    def __init__(self, labyrinth):
+    def __init__(self, labyrinth, game_window, pictures):
         self.Xposition = Xposition = CONST.start_X
         self.Yposition = Yposition = CONST.start_Y
         self.pockets = pockets = []
+        self.game_window = game_window
+        self.pictures = pictures
 
     def pickup(self, labyrinth, Xposition, Yposition, pockets):
         if labyrinth.maze[self.Yposition][self.Xposition] == "N":  # N for needle
-            pockets.append("needle")
+            pockets.append("N")
         if labyrinth.maze[self.Yposition][self.Xposition] == "T":  # T for tube
-            pockets.append("tube")
+            pockets.append("T")
         if labyrinth.maze[self.Yposition][self.Xposition] == "E":  # E for ether
-            pockets.append("ether")
+            pockets.append("E")
         else:
             pass
 
@@ -143,7 +194,8 @@ class Mc_Gyver:
         labyrinth,
         virgin_labyrinth,
         Xposition, Yposition,
-        event
+        event,
+        pictures
     ):
         Y_before_move = self.Yposition
         if event.type == pygame.KEYUP and event.key == pygame.K_UP:
@@ -164,9 +216,11 @@ class Mc_Gyver:
         # print("labyrinth after movement:")
         print(*labyrinth.maze, sep="\n")
         print("Mc Gyver has in his pockets: {}".format(self.pockets))
+        maze_display_update = LabyrinthDisplay.update_Display(
+            labyrinth, self.game_window, self.Xposition, self.Yposition, self.Xposition, Y_before_move, pictures)
 
     def horizontal_movement(
-        self, labyrinth, virgin_labyrinth, Xposition, Yposition, event
+        self, labyrinth, virgin_labyrinth, Xposition, Yposition, event, pictures
     ):
         X_before_move = self.Xposition
 
@@ -188,6 +242,8 @@ class Mc_Gyver:
         # print("labyrinth after movement:")
         print(*labyrinth.maze, sep="\n")
         print("Mc Gyver has in his pockets: {}".format(self.pockets))
+        maze_display_update = LabyrinthDisplay.update_Display(
+            labyrinth, self.game_window, self.Xposition, self.Yposition, X_before_move, self.Yposition, pictures)
 
 
 def main():
@@ -208,14 +264,20 @@ def main():
     print(*labyrinth.maze, sep="\n")
     print("")
 
-    # creation of our character instance
-    character = Mc_Gyver(labyrinth)
-
     # creation of our game window
     game_window = GameWindow()
 
+    # loading of our dictionnary likeing maze letters to the right images for pygame
+    pictures = Images()
+
+    # creation of our character instance
+    character = Mc_Gyver(labyrinth, game_window, pictures)
+
+    # display of our objects
+    display_objects = Objects_Display(game_window, pictures, character.pockets)
+
     # creation of our labyrinth display
-    maze_display = LabyrinthDisplay(labyrinth, game_window)
+    maze_display = LabyrinthDisplay(labyrinth, game_window, pictures)
     # maze_display.display_maze(labyrinth)
 
     game_on_going = True
@@ -230,7 +292,8 @@ def main():
                     labyrinth_copy,
                     character.Xposition,
                     character.Yposition,
-                    event
+                    event,
+                    pictures
                 )
             elif event.type == pygame.KEYUP and (event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT):
                 character.horizontal_movement(
@@ -238,13 +301,15 @@ def main():
                     labyrinth_copy,
                     character.Xposition,
                     character.Yposition,
-                    event
+                    event,
+                    pictures
                 )
             # elif event.type == pygame.KEYUP:
             #     print("\n you pressed the following invalid key: {} \n".format(pygame.event.key))
             # print("labyrinth used by pygame:")
             # print(*labyrinth.maze, sep="\n")
-            maze_display = LabyrinthDisplay(labyrinth, game_window)
+            pockets_display = Objects_Display(
+                game_window, pictures, character.pockets)
 
             if labyrinth.is_end_cell(character.Xposition, character.Yposition) == True:
                 if ("needle" in character.pockets and "tube" in character.pockets and "ether" in character.pockets):
@@ -254,63 +319,6 @@ def main():
                     CONST.messages.loose()
                     game_on_going = 0
 
-
-# DISPLACEMENT pygame
-
-"""
-   # get user input while the end of the maze is not reached
-   while labyrinth.is_end_cell(character.Xposition, character.Yposition) != True:
-        move = input(
-            "please use the z,q,s,d keys of your keyboard to move Mc_Gyver ")
-        print(
-            "Mc Gyver comes from this position: {},{}".format(
-                character.Xposition, character.Yposition
-            )
-        )
-
-        if move == "z" or move == "s":
-            character.vertical_movement(
-                labyrinth,
-                labyrinth_copy,
-                character.Xposition,
-                character.Yposition,
-                move,
-            )
-
-        if move == "q" or move == "d":
-            character.horizontal_movement(
-                labyrinth,
-                labyrinth_copy,
-                character.Xposition,
-                character.Yposition,
-                move,
-            )
-
-        # in case user input is not one of the key allowed
-        else:
-            if move != "z" and move != "q" and move != "s" and move != "d":
-                print("")
-                print("\n you pressed the following invalid key: {} \n".format(move))
-                print("")
-
-        # feedback for the user
-        print(
-            "Mc Gyver arrived at this position: {},{}".format(
-                character.Xposition, character.Yposition
-            )
-        )
-
-    # character has reached the end of the maze, check the pockets to know if he won or loose
-    if (
-        "needle" in character.pockets
-        and "tube" in character.pockets
-        and "ether" in character.pockets
-    ):
-        CONST.messages.win()
-
-    else:
-        CONST.messages.loose()
-"""
 
 pygame.init()
 main()

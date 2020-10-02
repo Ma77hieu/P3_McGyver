@@ -14,15 +14,19 @@ game_window_width = 1000
 game_window_height = 1000
 game_window_title = "Escape the maze or be DOOMED"
 
-LINE_WIDTH = 4
 VERTICAL_OFFSET = 50
 HORIZONTAL_OFFSET = 120
 CELL_WIDTH = 50
 CELL_HEIGHT = 50
 NBR_X_CELL = 15
 NBR_Y_CELL = 15
-WIDTH_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT+(NBR_X_CELL)*LINE_WIDTH
-HEIGHT_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT+(NBR_Y_CELL)*LINE_WIDTH
+WIDTH_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT
+HEIGHT_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT
+
+height_objects_surface = 2*CELL_HEIGHT
+width_objects_surface = 4*CELL_WIDTH
+
+white = (255, 255, 255)
 
 # path_mac=
 # path_guard=
