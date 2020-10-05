@@ -9,7 +9,7 @@ maze_path = "C:/Users/matthieu/GitHub/P3_McGyver/Labyrinth/labyrinth.txt"
 maze_size = 15
 item_type = ["N", "E", "T"]  # N for needle, T for tube and E for ether
 
-maze_bg_color = (244, 244, 239)
+
 game_window_width = 1000
 game_window_height = 1000
 game_window_title = "Escape the maze or be DOOMED"
@@ -26,7 +26,15 @@ HEIGHT_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT
 height_objects_surface = 2*CELL_HEIGHT
 width_objects_surface = 4*CELL_WIDTH
 
+height_messages_surface = 3*CELL_HEIGHT
+width_messages_surface = WIDTH_LABYRINTH-width_objects_surface-CELL_WIDTH
+
+maze_bg_color = (244, 244, 239)
 white = (255, 255, 255)
+orange = (239, 159, 45)
+green = (0, 255, 0)
+red = (255, 0, 0)
+black = (0, 0, 0)
 
 # path_mac=
 # path_guard=
