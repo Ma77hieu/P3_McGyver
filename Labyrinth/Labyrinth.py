@@ -84,13 +84,14 @@ class Objects_Display:
     def __init__(self, game_window, pictures, pockets=[]):
         objects_screen = pygame.Surface((
             CONST.width_objects_surface, CONST.height_objects_surface))
+        objects_screen.fill(CONST.maze_bg_color)
         game_window.game_screen.blit(
-            objects_screen, (CONST.HORIZONTAL_OFFSET, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2))
+            objects_screen, (CONST.HORIZONTAL_OFFSET, CONST.msg_screen_Y))
         font = pygame.font.Font('ressource/bahnschrift.ttf', 16)
         objects_text = font.render(
-            'You have in your pockets:', True, CONST.white)
+            'You have in your pockets:', True, CONST.black)
         game_window.game_screen.blit(
-            objects_text, (CONST.HORIZONTAL_OFFSET+5, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2+16))
+            objects_text, (CONST.HORIZONTAL_OFFSET+5, CONST.txt_Y))
         if pockets != []:
             for elem in range(len(pockets)):
                 if pockets[elem] == "N" or pockets[elem] == "T" or pockets[elem] == "E":
@@ -104,44 +105,18 @@ class Messages_Display:
         messages_screen = pygame.Surface((
             CONST.width_objects_surface, CONST.height_objects_surface))
         game_window.game_screen.blit(
-            messages_screen, (CONST.HORIZONTAL_OFFSET+CONST.width_objects_surface+CONST.CELL_WIDTH, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2))
+            messages_screen, (CONST.msg_screen_X, CONST.msg_screen_Y))
         font = pygame.font.Font('ressource/bahnschrift.ttf', 16)
-        if userfeedback == 'win':
-            messages_screen.fill(CONST.green)
+
+        if userfeedback in CONST.possible_user_feedbacks:
+            messages_screen.fill(CONST.bg_color_feedbacks[userfeedback])
             game_window.game_screen.blit(
-                messages_screen, (CONST.HORIZONTAL_OFFSET+CONST.width_objects_surface+CONST.CELL_WIDTH, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2))
+                messages_screen, (CONST.msg_screen_X, CONST.msg_screen_Y))
             objects_text = font.render(
-                'CONGRATS YOU WON!', True, CONST.black)
+                CONST.txt_user_feedbacks[userfeedback], True, CONST.txt_color_feedbacks[userfeedback])
             game_window.game_screen.blit(
-                objects_text, (CONST.HORIZONTAL_OFFSET+CONST.width_objects_surface+CONST.CELL_WIDTH+5, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2+16))
-        elif userfeedback == 'loose':
-            messages_screen.fill(CONST.red)
-            game_window.game_screen.blit(
-                messages_screen, (CONST.HORIZONTAL_OFFSET+CONST.width_objects_surface+CONST.CELL_WIDTH, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2))
-            objects_text = font.render(
-                'SORRY, YOU LOST', True, CONST.white)
-            game_window.game_screen.blit(
-                objects_text, (CONST.HORIZONTAL_OFFSET+CONST.width_objects_surface+CONST.CELL_WIDTH+5, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2+16))
-        elif userfeedback == 'collision':
-            messages_screen.fill(CONST.orange)
-            game_window.game_screen.blit(
-                messages_screen, (CONST.HORIZONTAL_OFFSET+CONST.width_objects_surface+CONST.CELL_WIDTH, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2))
-            objects_text = font.render(
-                "You hit a wall", True, CONST.white)
-            game_window.game_screen.blit(
-                objects_text, (CONST.HORIZONTAL_OFFSET+CONST.width_objects_surface+CONST.CELL_WIDTH+5, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2+16))
-        elif userfeedback == 0:
-            messages_screen.fill(CONST.maze_bg_color)
-            game_window.game_screen.blit(
-                messages_screen, (CONST.HORIZONTAL_OFFSET+CONST.width_objects_surface+CONST.CELL_WIDTH, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2))
-        else:
-            messages_screen.fill(CONST.orange)
-            game_window.game_screen.blit(
-                messages_screen, (CONST.HORIZONTAL_OFFSET+CONST.width_objects_surface+CONST.CELL_WIDTH, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2))
-            objects_text = font.render(
-                "You pressed an invalid key", True, CONST.black)
-            game_window.game_screen.blit(
-                objects_text, (CONST.HORIZONTAL_OFFSET+CONST.width_objects_surface+CONST.CELL_WIDTH+5, CONST.HEIGHT_LABYRINTH+CONST.CELL_HEIGHT*2+16))
+                objects_text, (CONST.txt_X, CONST.txt_Y))
+
         pygame.display.flip()
 
 
@@ -206,12 +181,11 @@ class Mc_Gyver:
         self.pictures = pictures
 
     def pickup(self, labyrinth, Xposition, Yposition, pockets):
-        if labyrinth.maze[self.Yposition][self.Xposition] == "N":  # N for needle
-            pockets.append("N")
-        if labyrinth.maze[self.Yposition][self.Xposition] == "T":  # T for tube
-            pockets.append("T")
-        if labyrinth.maze[self.Yposition][self.Xposition] == "E":  # E for ether
-            pockets.append("E")
+        if labyrinth.maze[self.Yposition][self.Xposition] in CONST.item_type:
+            pockets.append(labyrinth.maze[self.Yposition][self.Xposition])
+            userfeedback = 'pickup'
+            display_message = Messages_Display(
+                self.game_window, userfeedback)
         else:
             pass
 
@@ -353,25 +327,21 @@ def main():
                     event,
                     pictures
                 )
-            elif event.type == pygame.KEYDOWN and (event.key not in OK_user_inputs):
+            elif event.type == pygame.KEYDOWN and event.key not in OK_user_inputs:
                 userfeedback = 'invalid'
-                display_message = Messages_Display(game_window, userfeedback)
-                # print("\n you pressed the following invalid key: {} \n".format(pygame.event.key))
-            # print("labyrinth used by pygame:")
-            # print(*labyrinth.maze, sep="\n")
+                display_message = Messages_Display(
+                    game_window, userfeedback)
             pockets_display = Objects_Display(
                 game_window, pictures, character.pockets)
 
             if labyrinth.is_end_cell(character.Xposition, character.Yposition) == True:
                 if ("N" in character.pockets and "T" in character.pockets and "E" in character.pockets):
-                    # CONST.messages.win()
                     userfeedback = 'win'
                     display_message = Messages_Display(
                         game_window, userfeedback)
                     time.sleep(2)
                     game_on_going = 0
                 else:
-                    # CONST.messages.loose()
                     userfeedback = 'loose'
                     display_message = Messages_Display(
                         game_window, userfeedback)

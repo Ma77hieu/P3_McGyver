@@ -23,7 +23,7 @@ NBR_Y_CELL = 15
 WIDTH_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT
 HEIGHT_LABYRINTH = NBR_Y_CELL*CELL_HEIGHT
 
-height_objects_surface = 2*CELL_HEIGHT
+height_objects_surface = CELL_HEIGHT
 width_objects_surface = 4*CELL_WIDTH
 
 height_messages_surface = 3*CELL_HEIGHT
@@ -36,6 +36,17 @@ green = (0, 255, 0)
 red = (255, 0, 0)
 black = (0, 0, 0)
 
+msg_screen_X = HORIZONTAL_OFFSET+width_objects_surface+CELL_WIDTH
+msg_screen_Y = HEIGHT_LABYRINTH+CELL_HEIGHT*2
+txt_X = msg_screen_X+5
+txt_Y = msg_screen_Y+16
+possible_user_feedbacks = [0, 'win', 'loose', 'collision', 'pickup', 'invalid']
+txt_user_feedbacks = {0: '', 'win': 'CONGRATS YOU WON', 'loose': 'SORRY YOU LOST',
+                      'collision': 'you hit a wall', 'pickup': 'You picked up an item', 'invalid': 'You pressed an invalid key'}
+bg_color_feedbacks = {0: maze_bg_color, 'win': green, 'loose': red,
+                      'collision': orange, 'pickup': green, 'invalid': orange}
+txt_color_feedbacks = {0: maze_bg_color, 'win': black, 'loose': black,
+                       'collision': white, 'pickup': black, 'invalid': black}
 # path_mac=
 # path_guard=
 # path_needle=
