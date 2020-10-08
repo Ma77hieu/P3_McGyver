@@ -9,28 +9,27 @@ import constants as CONST
 class Labyrinth:
 
     def __init__(self):
-        self.start_X = CONST.start_X
-        self.start_Y = CONST.start_Y
-        self.finish_X = CONST.finish_X
-        self.finish_Y = CONST.finish_Y
-
         source_file = open(CONST.maze_path, "r")
         sorted_maze = []
         all_cells = source_file.read()
-        all_cells = all_cells.split(",")
+        all_cells = all_cells.split(",\n")
+        print(all_cells)
+        # print(len(all_cells))
         for row in range(CONST.maze_size):
-            line_cell = []
-            for column in range(CONST.maze_size):
-                line_cell.append(
-                    int(all_cells[column + row * CONST.maze_size]))
-            sorted_maze.append(line_cell)
+            maze_line = []
+            new_line = all_cells[row].split(",")
+            for i in range(len(new_line)):
+                new_line[i] = int(new_line[i])
+            maze_line.append(new_line)
+            sorted_maze.extend(maze_line)
+            print(*sorted_maze, sep="\n")
         self.maze = sorted_maze
-        self.maze[self.start_Y][self.start_X] = "S"
-        self.maze[self.finish_Y][self.finish_X] = "F"
+        self.maze[CONST.start_Y][CONST.start_X] = "S"
+        self.maze[CONST.finish_Y][CONST.finish_X] = "F"
 
 # used to check if character reached the end of the maze
     def is_end_cell(self, X, Y):
-        if X == self.finish_X and Y == self.finish_Y:
+        if X == CONST.finish_X and Y == CONST.finish_Y:
             return True
         return False
 
@@ -251,9 +250,9 @@ def main():
     # Place the items in our labyrinth
     labyrinth.place_items()
 
-    # print("labyrinth with items:")
-    # print(*labyrinth.maze, sep="\n")
-    # print("")
+    print("labyrinth with items:")
+    print(*labyrinth.maze, sep="\n")
+    print("")
 
     # Creation of the overall game window
     game_window = GameWindow()
