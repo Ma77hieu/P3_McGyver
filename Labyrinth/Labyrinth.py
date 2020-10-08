@@ -178,14 +178,12 @@ class Mc_Gyver:
                 self.Yposition = self.Yposition - 1
                 userfeedback = 0
             if labyrinth.maze[Y_before_move - 1][self.Xposition] == 1:
-                # CONST.messages.hit_wall()
                 userfeedback = 'collision'
         if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
             if labyrinth.maze[self.Yposition + 1][self.Xposition] != 1:
                 self.Yposition = self.Yposition + 1
                 userfeedback = 0
             if labyrinth.maze[Y_before_move + 1][self.Xposition] == 1:
-                # CONST.messages.hit_wall()
                 userfeedback = 'collision'
         # Visual feedback in case of collision
         display_message = Messages_Display(self.game_window, userfeedback)
@@ -196,10 +194,6 @@ class Mc_Gyver:
         ][self.Xposition]
         # Update Mac's position in the maze
         labyrinth.maze[self.Yposition][self.Xposition] = "M"
-        # print("labyrinth after movement:")
-        # print(*labyrinth.maze, sep="\n")
-        # print("Mc Gyver has in his pockets: {}".format(self.pockets))
-
         # Update the Labyrinth display
         maze_display_update = LabyrinthDisplay.update_Display(
             labyrinth, self.game_window, self.Xposition, self.Yposition, self.Xposition, Y_before_move, pictures)
@@ -229,9 +223,6 @@ class Mc_Gyver:
             self.Yposition
         ][X_before_move]
         labyrinth.maze[self.Yposition][self.Xposition] = "M"
-        # print("labyrinth after movement:")
-        # print(*labyrinth.maze, sep="\n")
-        # print("Mc Gyver has in his pockets: {}".format(self.pockets))
         maze_display_update = LabyrinthDisplay.update_Display(
             labyrinth, self.game_window, self.Xposition, self.Yposition, X_before_move, self.Yposition, pictures)
 
