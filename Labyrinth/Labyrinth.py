@@ -26,8 +26,8 @@ class Labyrinth:
         self.maze = sorted_maze
         self.maze[CONST.start_Y][CONST.start_X] = "S"
         self.maze[CONST.finish_Y][CONST.finish_X] = "F"
+    # used to check if character reached the end of the maze
 
-# used to check if character reached the end of the maze
     def is_end_cell(self, X, Y):
         if X == CONST.finish_X and Y == CONST.finish_Y:
             return True
@@ -52,17 +52,9 @@ class GameWindow:
             (CONST.game_window_width, CONST.game_window_height))
         pygame.display.set_caption(CONST.game_window_title)
         self.game_screen.fill(CONST.maze_bg_color)
-        self.mac = pygame.image.load(CONST.mac_path).convert_alpha()
-        self.guard = pygame.image.load(CONST.guard_path).convert_alpha()
-        self.needle = pygame.image.load(CONST.needle_path).convert_alpha()
-        self.tube = pygame.image.load(CONST.tube_path).convert_alpha()
-        self.ether = pygame.image.load(CONST.ether_path).convert_alpha()
-        self.wall = pygame.image.load(CONST.wall_path).convert_alpha()
-        self.blank = pygame.image.load(CONST.empty_path).convert_alpha()
-        self.start = pygame.image.load(CONST.start_path).convert_alpha()
 
 
-class Objects_Display:
+class Objects_Display():
     # create the zone to display the items in Mac's pockets
     def __init__(self, game_window, pictures, pockets=[]):
         objects_screen = pygame.Surface((
@@ -126,14 +118,22 @@ class LabyrinthDisplay():
 class Images():
     # Link the images to the letters inside the labyrinth
     def __init__(self, game_window):
-        self.images = {"M": game_window.mac,
-                       "N": game_window.needle,
-                       "E": game_window.ether,
-                       "T": game_window.tube,
-                       "F": game_window.guard,
-                       1: game_window.wall,
-                       0: game_window.blank,
-                       "S": game_window.start
+        self.mac = pygame.image.load(CONST.mac_path).convert_alpha()
+        self.guard = pygame.image.load(CONST.guard_path).convert_alpha()
+        self.needle = pygame.image.load(CONST.needle_path).convert_alpha()
+        self.tube = pygame.image.load(CONST.tube_path).convert_alpha()
+        self.ether = pygame.image.load(CONST.ether_path).convert_alpha()
+        self.wall = pygame.image.load(CONST.wall_path).convert_alpha()
+        self.blank = pygame.image.load(CONST.empty_path).convert_alpha()
+        self.start = pygame.image.load(CONST.start_path).convert_alpha()
+        self.images = {"M": self.mac,
+                       "N": self.needle,
+                       "E": self.ether,
+                       "T": self.tube,
+                       "F": self.guard,
+                       1: self.wall,
+                       0: self.blank,
+                       "S": self.start
                        }
 
 
@@ -247,7 +247,6 @@ def main():
 
     # Creation of the overall game window
     game_window = GameWindow()
-    print(game_window.mac)
 
     # Loading of our dictionnary linking maze letters to the right images for pygame
     pictures = Images(game_window)
