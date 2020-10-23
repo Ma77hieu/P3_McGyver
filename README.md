@@ -1,6 +1,7 @@
 <h1>Project 3 : Help Mc Gyver escape the maze</h1>
 
 <h2>Instructions:</h2>
+Please execute "pip install -r requirements.txt" to install the required libraires</br>
 Please execute "Labyrinth.py" to play the game
 
 <h2>Goal of the game:</h2>

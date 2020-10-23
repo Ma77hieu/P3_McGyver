@@ -6,6 +6,7 @@ import constants as CONST
 
 
 class Labyrinth:
+    """This is the maze imported from the Labyrinth.txt file"""
 
     def __init__(self):
         source_file = open(CONST.maze_path, "r")
@@ -23,14 +24,14 @@ class Labyrinth:
         self.maze[CONST.start_Y][CONST.start_X] = "S"
         self.maze[CONST.finish_Y][CONST.finish_X] = "F"
 
-    # used to check if the character reached the end of the maze
     def is_end(self, X, Y):
+        """Used to check if the character reached the end of the maze"""
         if X == CONST.finish_X and Y == CONST.finish_Y:
             return True
         return False
 
     def place_items(self):
-        # generate a random position for each item
+        """ Generates a random position for each item"""
         for component in CONST.item_type:
             item = Item(component, random.randint(
                 0, CONST.maze_size-1), random.randint(0, CONST.maze_size-1))
@@ -43,7 +44,8 @@ class Labyrinth:
 
 
 class GameWindow:
-    # define the general display of the game
+    """Global window of the game"""
+
     def __init__(self):
         self.game_screen = pygame.display.set_mode(
             (CONST.game_window_width, CONST.game_window_height))
@@ -52,7 +54,8 @@ class GameWindow:
 
 
 class Objects_Display(GameWindow):
-    # create the zone to display the items in Mac's pockets
+    """ Zone to display the items in Mac's pockets"""
+
     def __init__(self, pictures, pockets=[]):
         GameWindow.__init__(self)
         objects_screen = pygame.Surface((
@@ -82,7 +85,8 @@ class Objects_Display(GameWindow):
 
 
 class Messages_Display(GameWindow):
-    # display messages to the user to know what's happening
+    """Zone to display messages to the user to know what's happening"""
+
     def __init__(self, userfeedback):
         GameWindow.__init__(self)
         messages_screen = pygame.Surface((
@@ -107,7 +111,8 @@ class Messages_Display(GameWindow):
 
 
 class LabyrinthDisplay(GameWindow):
-    # Display the labyrinth inside the game window
+    """Display the labyrinth inside the game window"""
+
     def __init__(self, labyrinth, pictures):
         GameWindow.__init__(self)
         # self.game_window = game_window
@@ -119,9 +124,11 @@ class LabyrinthDisplay(GameWindow):
                      row*CONST.CELL_HEIGHT+CONST.VERTICAL_OFFSET))
         pygame.display.flip()
 
-    # Update the labyrinth when Mac moves without reloading the whole maze
     @classmethod
     def update_Display(self, labyrinth, X, Y, X_before, Y_before, pictures):
+        """Update the labyrinth when Mac moves without 
+        reloading the whole maze
+        """
         self.__init__(self, labyrinth, pictures)
         self.game_screen.blit(
             pictures.images[labyrinth.maze[Y_before][X_before]],
@@ -135,11 +142,13 @@ class LabyrinthDisplay(GameWindow):
         min_y = min(Y, Y_before)
         max_x = max(X, X_before)
         max_y = max(Y, Y_before)
-        pygame.display.update(min_x, min_y, (max_x-min_x), (max_y-min_y))
+        pygame.display.update(
+            min_x, min_y, (max_x-min_x), (max_y-min_y))
 
 
-class Images():
-    # Link the images to the letters inside the labyrinth
+class Images:
+    """Link the images to the letters inside the labyrinth"""
+
     def __init__(self):
         self.mac = pygame.image.load(CONST.mac_path).convert_alpha()
         self.guard = pygame.image.load(CONST.guard_path).convert_alpha()
@@ -161,6 +170,8 @@ class Images():
 
 
 class Item:
+    """The items Mac need to pickup to escape"""
+
     def __init__(self, item_name, Xposition, Yposition):
         self.item_name = item_name
         self.Xposition = Xposition
@@ -168,6 +179,8 @@ class Item:
 
 
 class Hero:
+    """Main character of the game: Mac Gyver"""
+
     def __init__(self, labyrinth, game_window, pictures):
         self.Xposition = CONST.start_X
         self.Yposition = CONST.start_Y
@@ -175,9 +188,8 @@ class Hero:
         self.game_window = game_window
         self.pictures = pictures
 
-    # Used to check if Mac is on a cell with an item
-
     def pickup(self, labyrinth, Xposition, Yposition, pockets):
+        """add items in Mac's pocket when he moves on it"""
         if labyrinth.maze[self.Yposition][self.Xposition] in CONST.item_type:
             pockets.append(labyrinth.maze[self.Yposition][self.Xposition])
             userfeedback = 'pickup'
@@ -194,9 +206,10 @@ class Hero:
         event,
         pictures
     ):
+        """Move Mac Gyver vertically"""
+        Y_before_move = self.Yposition
         # Save the starting position of mac
         # in roder to reinitialize the maze's cell after he moves
-        Y_before_move = self.Yposition
         if event.type == pygame.KEYUP and event.key == pygame.K_UP:
             # Check if movement is possible, update  (or not) Mac's position
             if labyrinth.maze[self.Yposition - 1][self.Xposition] != 1:
@@ -236,6 +249,7 @@ class Hero:
         event,
         pictures
     ):
+        """Move Mac Gyver horizontally"""
         X_before_move = self.Xposition
 
         if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:
@@ -266,11 +280,9 @@ class Hero:
 
 
 def main():
+    """Runs the game"""
     # Creation of our labyrinth instance
     labyrinth = Labyrinth()
-    # print("\n labyrinth without items: ")
-    # print(*labyrinth.maze, sep="\n")
-    # print("")
 
     # Creation of a copy of our labyrinth
     # it will be used to remember the type of the cell from which mcGyver moves
@@ -278,10 +290,6 @@ def main():
 
     # Place the items in our labyrinth
     labyrinth.place_items()
-
-    # print("labyrinth with items:")
-    # print(*labyrinth.maze, sep="\n")
-    # print("")
 
     # Creation of the overall game window
     game_window = GameWindow()
