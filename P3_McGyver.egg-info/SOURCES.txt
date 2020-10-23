@@ -1,0 +1,5 @@
+setup.py
+P3_McGyver.egg-info/PKG-INFO
+P3_McGyver.egg-info/SOURCES.txt
+P3_McGyver.egg-info/dependency_links.txt
+P3_McGyver.egg-info/top_level.txt
